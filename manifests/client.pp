@@ -36,6 +36,7 @@ class wazuh::client(
   $manage_client_keys              = 'export',
   $agent_auth_password             = undef,
   $wazuh_manager_root_ca_pem       = undef,
+  $wazuh_manager_root_ca_pem_file  = undef,
   $agent_seed                      = undef,
   $max_clients                     = 3000,
   $ar_repeated_offenders           = '',
@@ -158,14 +159,27 @@ class wazuh::client(
 
     # https://documentation.wazuh.com/current/user-manual/registering/use-registration-service.html#verify-manager-via-ssl
     $agent_auth_base_command = "/var/ossec/bin/agent-auth -m ${ossec_server_address} -A ${agent_name} -D /var/ossec/"
-    if $wazuh_manager_root_ca_pem != undef {
-      validate_string($wazuh_manager_root_ca_pem)
-      file { '/var/ossec/etc/rootCA.pem':
-        owner   => $wazuh::params::keys_owner,
-        group   => $wazuh::params::keys_group,
-        mode    => $wazuh::params::keys_mode,
-        content => $wazuh_manager_root_ca_pem,
-        require => Package[$agent_package_name],
+    if $wazuh_manager_root_ca_pem || $wazuh_manager_root_ca_pem_file != undef {
+      if ($wazuh_manager_root_ca_pem) {
+        validate_string($wazuh_manager_root_ca_pem)
+
+        file { '/var/ossec/etc/rootCA.pem':
+          owner   => $wazuh::params::keys_owner,
+          group   => $wazuh::params::keys_group,
+          mode    => $wazuh::params::keys_mode,
+          content => $wazuh_manager_root_ca_pem,
+          require => Package[$agent_package_name],
+        }
+      }
+      elsif ($wazuh_manager_root_ca_pem_file) {
+        file { '/var/ossec/etc/rootCA.pem':
+          ensure  => 'link',
+          target  => "${wazuh_manager_root_ca_pem_file}",
+          owner   => $wazuh::params::keys_owner,
+          group   => $wazuh::params::keys_group,
+          mode    => $wazuh::params::keys_mode,
+          require => Package[$agent_package_name],
+        }      
       }
 
       $agent_auth_command = "${agent_auth_base_command} -v /var/ossec/etc/rootCA.pem"
