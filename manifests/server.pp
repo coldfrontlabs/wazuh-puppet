@@ -256,7 +256,7 @@ class wazuh::server (
     if $wazuh_api_enable_https {
     
       if ($wazuh_api_server_crt_file) {
-        validate_string($wazuh_api_server_crt);
+        validate_string($wazuh_api_server_crt)
 
         file { '/var/ossec/api/configuration/ssl/server.crt':
           content => $wazuh_api_server_crt,
@@ -268,7 +268,7 @@ class wazuh::server (
         }
       }
       elsif ($wazuh_api_server_crt_file) {
-        validate_absolute_path($wazuh_api_server_crt_file);
+        validate_absolute_path($wazuh_api_server_crt_file)
 
         file { '/var/ossec/api/configuration/ssl/server.crt':
           ensure  => 'link',
@@ -282,7 +282,7 @@ class wazuh::server (
       }
       
       if ($wazuh_api_server_key) {
-        validate_string($wazuh_api_server_key);
+        validate_string($wazuh_api_server_key)
 
         file { '/var/ossec/api/configuration/ssl/server.key':
           content => $wazuh_api_server_key,
@@ -294,7 +294,7 @@ class wazuh::server (
         }
       }
       elsif ($wazuh_api_server_key_file) {
-        validate_absolute_path($wazuh_api_server_key_file);
+        validate_absolute_path($wazuh_api_server_key_file)
 
         file { '/var/ossec/api/configuration/ssl/server.key':
           ensure  => 'link',
