@@ -38,7 +38,9 @@ class wazuh::server (
   $install_wazuh_api                   = false,
   $wazuh_api_enable_https              = false,
   $wazuh_api_server_crt                = undef,
+  $wazuh_api_server_crt_file           = undef,
   $wazuh_api_server_key                = undef,
+  $wazuh_api_server_key_file           = undef,
   $manage_nodejs                       = true,
   $nodejs_repo_url_suffix              = '6.x',
   $agent_auth_password                 = undef,
@@ -252,24 +254,59 @@ class wazuh::server (
     }
 
     if $wazuh_api_enable_https {
-      validate_string($wazuh_api_server_crt, $wazuh_api_server_key)
-      file { '/var/ossec/api/configuration/ssl/server.key':
-        content => $wazuh_api_server_key,
-        owner   => 'root',
-        group   => 'ossec',
-        mode    => '0600',
-        require => Package[$wazuh::params::api_package],
-        notify  => Service[$wazuh::params::api_service],
-      }
+    
+      if ($wazuh_api_server_crt_file) {
+        validate_string($wazuh_api_server_crt);
 
-      file { '/var/ossec/api/configuration/ssl/server.crt':
-        content => $wazuh_api_server_crt,
-        owner   => 'root',
-        group   => 'ossec',
-        mode    => '0600',
-        require => Package[$wazuh::params::api_package],
-        notify  => Service[$wazuh::params::api_service],
+        file { '/var/ossec/api/configuration/ssl/server.crt':
+          content => $wazuh_api_server_crt,
+          owner   => 'root',
+          group   => 'ossec',
+          mode    => '0600',
+          require => Package[$wazuh::params::api_package],
+          notify  => Service[$wazuh::params::api_service],
+        }
       }
+      elsif ($wazuh_api_server_crt_file) {
+        validate_absolute_path($wazuh_api_server_crt_file);
+
+        file { '/var/ossec/api/configuration/ssl/server.crt':
+          ensure  => 'link',
+          target  => "${wazuh_api_server_crt_file}",
+          owner   => 'root',
+          group   => 'ossec',
+          mode    => '0600',
+          require => Package[$wazuh::params::api_package],
+          notify  => Service[$wazuh::params::api_service],
+        }
+      }
+      
+      if ($wazuh_api_server_key) {
+        validate_string($wazuh_api_server_key);
+
+        file { '/var/ossec/api/configuration/ssl/server.key':
+          content => $wazuh_api_server_key,
+          owner   => 'root',
+          group   => 'ossec',
+          mode    => '0600',
+          require => Package[$wazuh::params::api_package],
+          notify  => Service[$wazuh::params::api_service],
+        }
+      }
+      elsif ($wazuh_api_server_key_file) {
+        validate_absolute_path($wazuh_api_server_key_file);
+
+        file { '/var/ossec/api/configuration/ssl/server.key':
+          ensure  => 'link',
+          target  => "${wazuh_api_server_key_file}",
+          owner   => 'root',
+          group   => 'ossec',
+          mode    => '0600',
+          require => Package[$wazuh::params::api_package],
+          notify  => Service[$wazuh::params::api_service],
+        }
+      }    
+      validate_string($wazuh_api_server_crt, $wazuh_api_server_key)
     }
 
     # wazuh-api config.js
