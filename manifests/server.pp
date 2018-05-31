@@ -187,7 +187,7 @@ class wazuh::server (
   if $wazuh_manager_verify_manager_ssl {
     # If provided, ensure the cert/key files are
     # absolute paths.
-    if ($wazuh_manager_server_crt_file) {
+    if ($wazuh_manager_server_crt_file != undef) {
       validate_absolute_path($wazuh_manager_server_crt_file);
 
       file { '/var/ossec/etc/sslmanager.cert':
@@ -200,7 +200,7 @@ class wazuh::server (
         notify  => Service[$wazuh::params::server_service],
       }
     }
-    elsif ($wazuh_manager_server_crt) {
+    elsif ($wazuh_manager_server_crt != undef) {
       validate_string($wazuh_manager_server_crt);
 
       file { '/var/ossec/etc/sslmanager.cert':
@@ -213,7 +213,7 @@ class wazuh::server (
       }
     }
 
-    if ($wazuh_manager_server_key_file) {
+    if ($wazuh_manager_server_key_file != undef) {
       validate_absolute_path($wazuh_manager_server_key_file);
 
       file { '/var/ossec/etc/sslmanager.key':
@@ -226,7 +226,7 @@ class wazuh::server (
         notify  => Service[$wazuh::params::server_service],
       }
     }
-    elsif ($wazuh_manager_server_key) {
+    elsif ($wazuh_manager_server_key != undef) {
       validate_string($wazuh_manager_server_key);
 
       file { '/var/ossec/etc/sslmanager.key':
