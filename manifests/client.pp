@@ -160,7 +160,7 @@ class wazuh::client(
     # https://documentation.wazuh.com/current/user-manual/registering/use-registration-service.html#verify-manager-via-ssl
     $agent_auth_base_command = "/var/ossec/bin/agent-auth -m ${ossec_server_address} -A ${agent_name} -D /var/ossec/"
     if ($wazuh_manager_root_ca_pem != undef or $wazuh_manager_root_ca_pem_file != undef) {
-      if ($wazuh_manager_root_ca_pem) {
+      if ($wazuh_manager_root_ca_pem != undef) {
         validate_string($wazuh_manager_root_ca_pem)
 
         file { '/var/ossec/etc/rootCA.pem':
@@ -171,7 +171,7 @@ class wazuh::client(
           require => Package[$agent_package_name],
         }
       }
-      elsif ($wazuh_manager_root_ca_pem_file) {
+      elsif ($wazuh_manager_root_ca_pem_file != undef) {
         validate_absolute_path($wazuh_manager_root_ca_pem_file)
 
         file { '/var/ossec/etc/rootCA.pem':
