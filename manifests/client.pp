@@ -172,6 +172,8 @@ class wazuh::client(
         }
       }
       elsif ($wazuh_manager_root_ca_pem_file) {
+        validate_absolute_path($wazuh_manager_root_ca_pem_file)
+
         file { '/var/ossec/etc/rootCA.pem':
           ensure  => 'link',
           target  => "${wazuh_manager_root_ca_pem_file}",
