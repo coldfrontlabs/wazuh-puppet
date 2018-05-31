@@ -54,7 +54,9 @@ class wazuh::server (
   $api_config_template                 = 'wazuh/api/config.js.erb',
   $wazuh_manager_verify_manager_ssl    = false,
   $wazuh_manager_server_crt            = undef,
+  $wazuh_manager_server_crt_file       = undef,
   $wazuh_manager_server_key            = undef,
+  $wazuh_manager_server_key_file       = undef,
   Boolean $manage_firewall             = $::wazuh::params::manage_firewall,
 ) inherits wazuh::params {
   validate_bool(
@@ -181,28 +183,59 @@ class wazuh::server (
 
   # https://documentation.wazuh.com/current/user-manual/registering/use-registration-service.html#verify-manager-via-ssl
   if $wazuh_manager_verify_manager_ssl {
-    validate_string(
-      $wazuh_manager_server_crt, $wazuh_manager_server_key
-    )
+    # If provided, ensure the cert/key files are
+    # absolute paths.
+    if ($wazuh_manager_server_crt_file) {
+      validate_absolute_path($wazuh_manager_server_crt_file);
 
-    file { '/var/ossec/etc/sslmanager.key':
-      content => $wazuh_manager_server_key,
-      owner   => 'root',
-      group   => 'ossec',
-      mode    => '0640',
-      require => Package[$wazuh::params::server_package],
-      notify  => Service[$wazuh::params::server_service],
+      file { '/var/ossec/etc/sslmanager.cert':
+        ensure  => 'link',
+        target  => "${wazuh_manager_server_crt_file}",
+        owner   => 'root',
+        group   => 'ossec',
+        mode    => '0640',
+        require => Package[$wazuh::params::server_package],
+        notify  => Service[$wazuh::params::server_service],
+      }
+    }
+    elsif ($wazuh_manager_server_crt) {
+      validate_string($wazuh_manager_server_crt);
+
+      file { '/var/ossec/etc/sslmanager.cert':
+        content => $wazuh_manager_server_crt,
+        owner   => 'root',
+        group   => 'ossec',
+        mode    => '0640',
+        require => Package[$wazuh::params::server_package],
+        notify  => Service[$wazuh::params::server_service],
+      }
     }
 
-    file { '/var/ossec/etc/sslmanager.cert':
-      content => $wazuh_manager_server_crt,
-      owner   => 'root',
-      group   => 'ossec',
-      mode    => '0640',
-      require => Package[$wazuh::params::server_package],
-      notify  => Service[$wazuh::params::server_service],
-    }
+    if ($wazuh_manager_server_key_file) {
+      validate_absolute_path($wazuh_manager_server_key_file);
 
+      file { '/var/ossec/etc/sslmanager.key':
+        ensure  => 'link',
+        target  => "${wazuh_manager_server_key_file}",
+        owner   => 'root',
+        group   => 'ossec',
+        mode    => '0640',
+        require => Package[$wazuh::params::server_package],
+        notify  => Service[$wazuh::params::server_service],
+      }
+    }
+    elsif ($wazuh_manager_server_key) {
+      validate_string($wazuh_manager_server_key);
+
+      file { '/var/ossec/etc/sslmanager.key':
+        content => $wazuh_manager_server_key,
+        owner   => 'root',
+        group   => 'ossec',
+        mode    => '0640',
+        require => Package[$wazuh::params::server_package],
+        notify  => Service[$wazuh::params::server_service],
+      }
+    }
   }
 
   ### Wazuh API
