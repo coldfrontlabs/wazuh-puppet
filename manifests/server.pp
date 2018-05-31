@@ -255,7 +255,7 @@ class wazuh::server (
 
     if $wazuh_api_enable_https {
     
-      if ($wazuh_api_server_crt_file) {
+      if ($wazuh_api_server_crt != undef) {
         validate_string($wazuh_api_server_crt)
 
         file { '/var/ossec/api/configuration/ssl/server.crt':
@@ -267,7 +267,7 @@ class wazuh::server (
           notify  => Service[$wazuh::params::api_service],
         }
       }
-      elsif ($wazuh_api_server_crt_file) {
+      elsif ($wazuh_api_server_crt_file != undef) {
         validate_absolute_path($wazuh_api_server_crt_file)
 
         file { '/var/ossec/api/configuration/ssl/server.crt':
@@ -281,7 +281,7 @@ class wazuh::server (
         }
       }
       
-      if ($wazuh_api_server_key) {
+      if ($wazuh_api_server_key != undef) {
         validate_string($wazuh_api_server_key)
 
         file { '/var/ossec/api/configuration/ssl/server.key':
@@ -293,7 +293,7 @@ class wazuh::server (
           notify  => Service[$wazuh::params::api_service],
         }
       }
-      elsif ($wazuh_api_server_key_file) {
+      elsif ($wazuh_api_server_key_file != undef) {
         validate_absolute_path($wazuh_api_server_key_file)
 
         file { '/var/ossec/api/configuration/ssl/server.key':
@@ -305,8 +305,7 @@ class wazuh::server (
           require => Package[$wazuh::params::api_package],
           notify  => Service[$wazuh::params::api_service],
         }
-      }    
-      validate_string($wazuh_api_server_crt, $wazuh_api_server_key)
+      }
     }
 
     # wazuh-api config.js
