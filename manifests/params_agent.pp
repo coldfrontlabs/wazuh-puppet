@@ -410,7 +410,21 @@ class wazuh::params_agent {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
+              if ( $::operatingsystemrelease     =~ /^8.*/ ){
+                $ossec_service_provider = 'systemd'
+                $wodle_openscap_content = {
+                  'ssg-rhel-8-ds.xml'   => {
+                    'type'   => 'xccdf',
+                    profiles => [
+                      'xccdf_org.ssgproject.content_profile_pci-dss',
+                      'xccdf_org.ssgproject.content_profile_common',
+                    ]
+                  },
+                  'cve-redhat-8-ds.xml' => {
+                    'type' => 'xccdf',
+                  }
+                }
+              }elsif ( $::operatingsystemrelease =~ /^7.*/ ) {
                 $ossec_service_provider = 'systemd'
 
                 $wodle_openscap_content = {
