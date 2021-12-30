@@ -393,7 +393,7 @@ class wazuh::params_agent {
                 }
               }
             }
-            /^(RedHat|OracleLinux)$/: {
+            /^(RedHat|OracleLinux|Rocky)$/: {
               if ( $::operatingsystemrelease =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
 

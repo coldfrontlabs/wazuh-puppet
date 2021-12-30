@@ -317,7 +317,7 @@ class wazuh::agent (
   'Linux': {
     ## ossec.conf generation concats
     case $::operatingsystem {
-      'RedHat', 'OracleLinux':{
+      'RedHat', 'OracleLinux', 'Rocky':{
         $apply_template_os = 'rhel'
         if ( $::operatingsystemrelease     =~ /^8.*/ ){
           $rhel_version = '8'
