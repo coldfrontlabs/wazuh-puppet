@@ -356,7 +356,7 @@ class wazuh::params_agent {
             { 'location' => '/var/log/secure', 'log_format' => 'syslog' },
             { 'location' => '/var/log/maillog', 'log_format' => 'syslog' },
           ]
-          case $::operatingsystem {
+          case $$facts['os']['name'] {
             'Amazon': {
               # Amazon is based on Centos-6 with some improvements
               # taken from RHEL-7 but uses SysV-Init, not Systemd.
@@ -366,7 +366,7 @@ class wazuh::params_agent {
             }
             'CentOS': {
 
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
 
                 $wodle_openscap_content = {
@@ -379,7 +379,7 @@ class wazuh::params_agent {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
                 $ossec_service_provider = 'systemd'
 
                 $wodle_openscap_content = {
@@ -394,7 +394,7 @@ class wazuh::params_agent {
               }
             }
             /^(RedHat|OracleLinux)$/: {
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
 
                 $wodle_openscap_content = {
@@ -410,7 +410,7 @@ class wazuh::params_agent {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
                 $ossec_service_provider = 'systemd'
 
                 $wodle_openscap_content = {
@@ -426,7 +426,7 @@ class wazuh::params_agent {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^8.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
                 $ossec_service_provider = 'systemd'
 
                 $wodle_openscap_content = {
